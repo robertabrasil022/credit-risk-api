@@ -1,7 +1,10 @@
 from fastapi import FastAPI
+from app.database.connection import engine, Base
+from app.database import models
 
-# Inicializamos a aplicação FastAPI com metadados profissionais. 
-# Recrutadores olham se você documenta o propósito do microsserviço.
+# Cria todas as tabelas no banco ao iniciar a aplicação
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI(
     title="Credit Risk Analysis Microservice",
     description="API interna para simulação e avaliação de risco de crédito de transações financeiras.",
@@ -10,10 +13,6 @@ app = FastAPI(
 
 @app.get("/")
 def read_root():
-    """
-    Endpoint de Health Check (Checagem de Saúde).
-    Útil para monitoramento em ambientes de nuvem (AWS/Azure) e clusters Kubernetes.
-    """
     return {
         "status": "healthy",
         "service": "credit-risk-api",
