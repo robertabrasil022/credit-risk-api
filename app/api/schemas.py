@@ -55,3 +55,17 @@ class ClientAnalysisResponse(BaseModel):
     analysis: CreditAnalysisResponse
 
     model_config = {"from_attributes": True}
+
+# Schema de entrada para análise em tempo real
+class AnalyzeRequest(BaseModel):
+    credit_score: int
+    monthly_income: float
+    total_transactions: int
+    total_transaction_amount: float
+
+# Schema de resposta da análise em tempo real
+class AnalyzeResponse(BaseModel):
+    risk_level: RiskLevel
+    risk_score: float
+    approved: str
+    analysis_notes: str

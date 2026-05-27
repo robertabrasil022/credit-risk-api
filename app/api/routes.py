@@ -6,10 +6,11 @@ from app.api.schemas import (
     ClientSummary,
     ClientResponse,
     ClientAnalysisResponse,
+    AnalyzeRequest,
+    AnalyzeResponse,
 )
-
+from app.services.risk_service import risk_service
 router = APIRouter(prefix="/clients", tags=["Clients"])
-
 
 @router.get("/", response_model=list[ClientSummary])
 def list_clients(db: Session = Depends(get_db)):
@@ -41,3 +42,17 @@ def get_client_analysis(client_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Análise não encontrada")
 
     return {"client": client, "analysis": analysis}
+
+@router.post("/analyze", response_model=AnalyzeResponse)
+def analyze_credit_risk(request: AnalyzeRequest):
+    """
+    Executa análise de risco de crédito em tempo real.
+    Não requer que o cliente esteja cadastrado no banco.
+    """
+    result = risk_service.calculate_risk(
+        credit_score=request.credit_score,
+        monthly_income=request.monthly_income,
+        total_transactions=request.total_transactions,
+        total_transaction_amount=request.total_transaction_amount
+    )
+    return result
